@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A walk-forward research dashboard for Malaysian palm oil inventory risk.">
+  <title>FCPO Hedging Lab</title>
+  <style>{{STYLE}}</style>
+</head>
+<body>
+  <header class="site-header"><div class="wrap masthead">
+    <a class="brand" href="#top" aria-label="FCPO Hedging Lab home"><span class="mark" aria-hidden="true">↘</span> Hedge Lab</a>
+    <nav aria-label="Sections"><a href="#performance">Performance</a><a href="#stress">Stress months</a><a href="#method">Methodology</a></nav>
+  </div></header>
+  <main class="wrap" id="top">
+    <section class="hero" aria-labelledby="title">
+      <div class="eyebrow">COMMODITY RISK / MALAYSIA</div>
+      <h1 id="title">FCPO Hedging Lab</h1>
+      <p>How much price risk can a short futures hedge remove from a crude palm oil inventory position?</p>
+      <div class="source-line"><span class="badge" id="data-badge"></span><span id="source-label"></span></div>
+    </section>
+    <section class="filters" aria-label="Backtest settings">
+      <label>Futures series<select id="contract"></select></label>
+      <label>Estimation window<select id="window"></select></label>
+      <label>Round-trip cost<select id="cost"></select></label>
+      <div class="evaluation"><span>Evaluation period</span><strong id="period"></strong></div>
+    </section>
+    <section id="performance" aria-labelledby="perf-title">
+      <div class="section-title"><div><div class="eyebrow">BACKTEST RESULTS</div><h2 id="perf-title">Hedge performance</h2></div>
+        <button type="button" id="download">↓ Export monthly P&amp;L</button>
+      </div>
+      <div class="cards" aria-live="polite">
+        <article><h3>Variance reduction</h3><strong id="he"></strong><p>Rolling hedge vs. unhedged</p></article>
+        <article><h3>Monthly volatility</h3><strong id="vol"></strong><p id="vol-detail"></p></article>
+        <article><h3>Average worst 5% P&amp;L</h3><strong id="tail"></strong><p>Rolling hedge · MYR/t</p></article>
+        <article><h3>Months with added loss</h3><strong id="added"></strong><p>Rolling hedge vs. unhedged</p></article>
+      </div>
+      <article class="panel chart-panel">
+        <div class="chart-head"><div><h3 id="chart-title">Cumulative inventory P&amp;L</h3><p>MYR per tonne · one tonne of exposure each interval</p></div>
+          <div class="segments" role="group" aria-label="P&amp;L chart interval"><button id="cumulative" aria-pressed="true">Cumulative</button><button id="monthly" aria-pressed="false">Monthly</button></div>
+        </div>
+        <div class="legend" aria-hidden="true"><span class="spot">Unhedged</span><span class="full">1:1 hedge</span><span class="rolling">Rolling hedge</span></div>
+        <svg id="chart" tabindex="0" role="img" aria-labelledby="chart-title" aria-describedby="chart-help"></svg>
+        <p id="chart-readout" class="readout"></p>
+        <p id="chart-help" class="fine">Hover over the plot or focus it and use the arrow keys to inspect a month.</p>
+      </article>
+      <article class="panel table-panel">
+        <h3>Strategy comparison</h3>
+        <div class="table-wrap"><table aria-label="Strategy comparison">
+          <thead><tr><th scope="col">Strategy</th><th scope="col">Variance reduction</th><th scope="col">Volatility</th><th scope="col">Worst 5% avg.</th><th scope="col">Worst month</th><th scope="col">Added-loss months</th></tr></thead>
+          <tbody id="comparison"></tbody>
+        </table></div>
+        <p class="fine">P&amp;L and volatility in MYR/t. All strategies use the same evaluation months.</p>
+      </article>
+    </section>
+    <section id="stress" aria-labelledby="stress-title">
+      <div class="section-title"><div><div class="eyebrow">BASIS RISK</div><h2 id="stress-title">When the hedge made losses worse</h2></div></div>
+      <article class="panel table-panel">
+        <p id="stress-note"></p>
+        <div class="table-wrap" id="stress-table"><table aria-label="Largest additional losses from the rolling hedge">
+          <thead><tr><th scope="col">Month</th><th scope="col">Spot change</th><th scope="col">Futures change</th><th scope="col">Short ratio</th><th scope="col">Rolling hedge P&amp;L</th><th scope="col">Extra loss</th></tr></thead>
+          <tbody id="stress-rows"></tbody>
+        </table></div>
+        <p class="fine" id="stress-unit">P&amp;L and price changes in MYR/t. Extra loss equals unhedged P&amp;L minus rolling-hedge P&amp;L.</p>
+      </article>
+    </section>
+    <section id="method" aria-labelledby="method-title">
+      <div class="section-title"><div><div class="eyebrow">RESEARCH DESIGN</div><h2 id="method-title">Methodology</h2></div></div>
+      <div class="methods">
+        <article class="panel"><h3>Walk-forward sizing</h3><p>At each interval start, fit spot price changes on futures price changes from the previous 12, 24 or 36 intervals. Clip the OLS slope to [0, 1.5] and apply it to the following interval. Each hedge starts and closes within one interval.</p></article>
+        <article class="panel"><h3>Net hedge P&amp;L</h3><p>Spot change minus the short ratio times the futures change and assumed round-trip cost. Volatility is sample standard deviation. The tail metric averages the lowest ceiling(5% × n) monthly P&amp;L observations.</p></article>
+        <article class="panel"><h3>Data and limits</h3><p id="method-data"></p><p>Results omit margin funding, integer lot rounding and market impact. There is no claim of statistical significance or investable returns.</p></article>
+      </div>
+    </section>
+    <noscript><p>Enable JavaScript to view the dashboard and export the results.</p></noscript>
+  </main>
+  <footer><div class="wrap"><span>FCPO Hedging Lab</span><a href="#top">Back to top ↑</a></div></footer>
+  <script type="application/json" id="data">{{PAYLOAD}}</script>
+  <script>{{SCRIPT}}</script>
+</body>
+</html>
